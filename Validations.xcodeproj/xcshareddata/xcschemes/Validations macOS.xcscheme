@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F34C48E8216F0B21008D8587"
-               BuildableName = "Validations_macOS.framework"
+               BuildableName = "Validations.framework"
                BlueprintName = "Validations macOS"
                ReferencedContainer = "container:Validations.xcodeproj">
             </BuildableReference>
@@ -43,7 +43,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F34C48E8216F0B21008D8587"
-            BuildableName = "Validations_macOS.framework"
+            BuildableName = "Validations.framework"
             BlueprintName = "Validations macOS"
             ReferencedContainer = "container:Validations.xcodeproj">
          </BuildableReference>
@@ -65,7 +65,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F34C48E8216F0B21008D8587"
-            BuildableName = "Validations_macOS.framework"
+            BuildableName = "Validations.framework"
             BlueprintName = "Validations macOS"
             ReferencedContainer = "container:Validations.xcodeproj">
          </BuildableReference>
@@ -83,7 +83,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F34C48E8216F0B21008D8587"
-            BuildableName = "Validations_macOS.framework"
+            BuildableName = "Validations.framework"
             BlueprintName = "Validations macOS"
             ReferencedContainer = "container:Validations.xcodeproj">
          </BuildableReference>
