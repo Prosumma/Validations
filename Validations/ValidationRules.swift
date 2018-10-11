@@ -12,124 +12,18 @@ public extension ValidationRule {
     
     static let valid = ValidationRule { _ in return .valid }
     
-    static func notNil(message: String = "A value is required.") -> ValidationRule {
+    static func message(_ message: String, for rule: ValidationRule) -> ValidationRule {
         return ValidationRule { target in
-            if target == nil {
+            if !rule.validate(target).isValid {
                 return ValidationResult(message)
             }
             return .valid
         }
     }
     
-    static let notNil = ValidationRule.notNil()
-    
-    static func required(message: String = "A value is required.") -> ValidationRule {
+    static func not(_ rule: ValidationRule, message: String) -> ValidationRule {
         return ValidationRule { target in
-            if target == nil {
-                return ValidationResult(message)
-            }
-            if let string = target! as? String, string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                return ValidationResult(message)
-            }
-            return .valid
-        }
-    }
-    
-    static let required = ValidationRule.required()
-    
-    static func notWhitespace(message: String = "A value is required.") -> ValidationRule {
-        return ValidationRule { (target: String) in
-            if target.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                return ValidationResult(message)
-            }
-            return .valid
-        }
-    }
-    
-    static let notWhitespace = ValidationRule.notWhitespace()
-    
-    static func notEmpty<C: Collection>(type: C.Type, message: String = "A value is required.") -> ValidationRule {
-        return ValidationRule { (target: C) in
-            if target.isEmpty {
-                return ValidationResult(message)
-            }
-            return .valid
-        }
-    }
-    
-    static let notEmpty = ValidationRule.notEmpty(type: String.self)
- 
-    static func type<T>(_ type: T.Type, message: String? = nil) -> ValidationRule {
-        return ValidationRule { target in
-            if target is T? {
-                return .valid
-            }
-            let expectedTypeName = String(reflecting: type)
-            return ValidationResult("A value of type \"\(expectedTypeName)\" was expected.")
-        }
-    }
-    
-    static func compare(to string: String, options: String.CompareOptions = [], message: String = "The value is invalid.") -> ValidationRule {
-        return ValidationRule { (target: String) in
-            if target.range(of: string, options: options, range: nil, locale: nil) == nil {
-                return ValidationResult(message)
-            }
-            return .valid
-        }
-    }
-    
-    static func regex(_ regex: String, options: String.CompareOptions = [], message: String = "The value is invalid.") -> ValidationRule {
-        return compare(to: regex, options: options.union(.regularExpression), message: message)
-    }
-    
-    static func convertible<Raw: RawRepresentable>(to type: Raw.Type, message: String = "The value could not be converted to the target type.") -> ValidationRule {
-        return ValidationRule { (target: Raw.RawValue) in
-            if Raw(rawValue: target) == nil {
-                return ValidationResult(message)
-            }
-            return .valid
-        }
-    }
-    
-    static func convertible<From, To>(by convert: @escaping (From) -> To?, message: String = "The value could not be converted to the target type.") -> ValidationRule {
-        return ValidationRule { (target: From) in
-            if convert(target) == nil {
-                return ValidationResult(message)
-            }
-            return .valid
-        }
-    }
-    
-    static func range<Bound>(_ range: PartialRangeFrom<Bound>, message: String = "The value was not in the accepted range.") -> ValidationRule {
-        return ValidationRule { (target: Bound) in
-            if !range.contains(target) {
-                return ValidationResult(message)
-            }
-            return .valid
-        }
-    }
-    
-    static func range<Bound>(_ range: Range<Bound>, message: String = "The value was not in the accepted range.") -> ValidationRule {
-        return ValidationRule { (target: Bound) in
-            if !range.contains(target) {
-                return ValidationResult(message)
-            }
-            return .valid
-        }
-    }
-    
-    static func range<Bound>(_ range: PartialRangeUpTo<Bound>, message: String = "The value was not in the accepted range.") -> ValidationRule {
-        return ValidationRule { (target: Bound) in
-            if !range.contains(target) {
-                return ValidationResult(message)
-            }
-            return .valid
-        }
-    }
-    
-    static func range<Bound>(_ range: PartialRangeThrough<Bound>, message: String = "The value was not in the accepted range.") -> ValidationRule {
-        return ValidationRule { (target: Bound) in
-            if !range.contains(target) {
+            if rule.validate(target).isValid {
                 return ValidationResult(message)
             }
             return .valid
@@ -148,7 +42,7 @@ public extension ValidationRule {
     }
     
     static func all(_ rules: ValidationRule...) -> ValidationRule {
-        return all(rules)
+        return .all(rules)
     }
     
     static func any<Rules: Sequence>(_ rules: Rules) -> ValidationRule where Rules.Element == ValidationRule {
@@ -163,42 +57,22 @@ public extension ValidationRule {
     }
     
     static func any(_ rules: ValidationRule...) -> ValidationRule {
-        return any(rules)
+        return .any(rules)
     }
     
-    static func `if`(_ condition: ValidationRule, then: ValidationRule) -> ValidationRule {
+    static func `if`(_ condition: ValidationRule, then: ValidationRule, else: ValidationRule? = nil) -> ValidationRule {
         return ValidationRule { target in
-            if condition.validate(target).isValid {
-                return then.validate(target)
-            } else {
-                return .valid
-            }
+            return condition.validate(target).isValid ? then.validate(target) : `else`?.validate(target) ?? .valid
         }
     }
     
-    static func `if`(_ condition: @escaping (Any) -> Bool, then: ValidationRule) -> ValidationRule {
-        return ValidationRule { target in
-            guard let target = target else {
-                return .valid
-            }
-            if condition(target) {
-                return then.validate(target)
-            }
-            return .valid
+    static func `if`<Target>(_ condition: @escaping (Target) -> Bool, then: ValidationRule, else: ValidationRule? = nil) -> ValidationRule {
+        return ValidationRule { (target: Target) in
+            return condition(target) ? then.validate(target) : `else`?.validate(target) ?? .valid
         }
     }
     
-    static func not(_ rule: ValidationRule, message: String) -> ValidationRule {
-        return ValidationRule { target in
-            if !rule.validate(target).isValid {
-                return .valid
-            } else {
-                return ValidationResult(message)
-            }
-        }
-    }
-    
-    static func map<From, To>(_ transform: @escaping (From) -> To?, then: ValidationRule) -> ValidationRule {
+    static func ifMap<From, To>(_ transform: @escaping (From) -> To?, then: ValidationRule) -> ValidationRule {
         return ValidationRule { (target: From) in
             guard let transformed = transform(target) else {
                 return .valid
@@ -207,4 +81,107 @@ public extension ValidationRule {
         }
     }
     
+    static func type<Target>(_ type: Target.Type) -> ValidationRule {
+        return ValidationRule { target in
+            if target == nil || target! is Target { return .valid }
+            return .invalid
+        }
+    }
+    
+    static let `nil` = ValidationRule { target in
+        if target != nil {
+            return .valueNotAllowed
+        }
+        return .valid
+    }
+    
+    static let notNil = ValidationRule.not(.nil, message: ValidationResult.valueRequiredMessage)
+
+    static func empty<C: Collection>(_ type: C.Type) -> ValidationRule {
+        return ValidationRule { (target: C) in
+            if !target.isEmpty {
+                return .valueNotAllowed
+            }
+            return .valid
+        }
+    }
+    
+    static func notEmpty<C: Collection>(_ type: C.Type) -> ValidationRule {
+        return .if(.type(C.self), then: .not(.empty(type), message: ValidationResult.valueRequiredMessage))
+    }
+    
+    static let empty = ValidationRule.empty(String.self)
+    static let notEmpty = ValidationRule.notEmpty(String.self)
+    
+    static let whitespace = ValidationRule { (target: String) in
+        if target.isEmpty || !target.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return ValidationResult("The value must consist solely of whitespace.")
+        }
+        return .valid
+    }
+    
+    static let notWhitespace = ValidationRule.if(.type(String.self), then: .not(.whitespace, message: ValidationResult.valueRequiredMessage))    
+    
+    static func required<C: Collection>(_ type: C.Type) -> ValidationRule {
+        return .message(ValidationResult.valueRequiredMessage, for: .all(.notNil, .notEmpty(C.self), .notWhitespace))
+    }
+    
+    static let required = ValidationRule.required(String.self)
+    
+    static func compare(_ string: String, options: String.CompareOptions = []) -> ValidationRule {
+        return ValidationRule { (target: String) in
+            if target.range(of: string, options: options, range: nil, locale: nil) == nil {
+                return .invalid
+            }
+            return .valid
+        }
+    }
+    
+    static func regex(_ regex: String, options: String.CompareOptions = []) -> ValidationRule {
+        return compare(regex, options: options.union(.regularExpression))
+    }
+    
+    static func range<Bound>(_ range: Range<Bound>) -> ValidationRule {
+        return ValidationRule { (target: Bound) in
+            return range.contains(target) ? .valid : .outOfRange
+        }
+    }
+    
+    static func convertible<To: RawRepresentable>(to: To.Type) -> ValidationRule {
+        return ValidationRule { (target: To.RawValue) in
+            return To(rawValue: target) == nil ? .invalid : .valid
+        }
+    }
+    
+    /*
+    static func range<Bound>(_ range: ClosedRange<Bound>) -> ValidationRule {
+        return ValidationRule { (target: Bound) in
+            return range.contains(target) ? .valid : .outOfRange
+        }
+    }
+    
+    static func range<Bound>(_ range: CountableClosedRange<Bound>) -> ValidationRule {
+        return ValidationRule { (target: Bound) in
+            return range.contains(target) ? .valid : .outOfRange
+        }
+    }
+    
+    static func range<Bound>(_ range: PartialRangeFrom<Bound>) -> ValidationRule {
+        return ValidationRule { (target: Bound) in
+            return range.contains(target) ? .valid : .outOfRange
+        }
+    }
+    
+    static func range<Bound>(_ range: PartialRangeUpTo<Bound>) -> ValidationRule {
+        return ValidationRule { (target: Bound) in
+            return range.contains(target) ? .valid : .outOfRange
+        }
+    }
+    
+    static func range<Bound>(_ range: PartialRangeThrough<Bound>) -> ValidationRule {
+        return ValidationRule { (target: Bound) in
+            return range.contains(target) ? .valid : .outOfRange
+        }
+    }
+    */
 }

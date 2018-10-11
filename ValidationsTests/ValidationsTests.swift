@@ -28,8 +28,8 @@ class ValidationsTests: XCTestCase {
             .all (
                 .required,
                 .any(.type(String.self), .type(Int.self)),
-                .if(.type(String.self), then: .regex("^\\d+$", message: "The value must be numeric.")),
-                .if(.type(Int.self), then: .range(0..<100))
+                .regex("^\\d+$"),
+                .range(0..<100)
             )
         XCTAssertTrue(rule.validate("33").isValid)
         XCTAssertFalse(rule.validate(nil).isValid)

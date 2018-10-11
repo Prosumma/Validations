@@ -20,18 +20,15 @@ struct User: Validatable {
     var sheep: Double?
 
     var validationRules: [PartialKeyPath<User>: ValidationRule] {
-        let ageRange: ValidationRule = .range(18..<25, message: "Only young'uns please.")
+        let ageRange: ValidationRule = .range(18..<25)
         return [
             \User.name: .required,
             \User.gender: .convertible(to: Gender.self),
             \User.age: .all (
                 .required,
                 .any(.type(String.self), .type(Int.self)),
-                .if(.type(String.self), then: .all (
-                    .convertible(by: Convert.stringToInt),
-                    .map(Convert.stringToInt, then: ageRange)
-                )),
-                .if(.type(Int.self), then: ageRange)
+                .ifMap(Convert.stringToInt, then: ageRange),
+                ageRange
             )
         ]
     }

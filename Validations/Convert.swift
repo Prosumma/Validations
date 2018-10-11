@@ -15,6 +15,10 @@ public struct Convert {
         return Int(string)
     }
     
+    public static func trim(_ string: String) -> String? {
+        return string.isEmpty ? string : string.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
     public static func to<Raw: RawRepresentable>(_ type: Raw.Type) -> (Raw.RawValue) -> Raw? {
         return { Raw(rawValue: $0) }
     }
