@@ -35,6 +35,13 @@ public struct ValidationResultCollection<Target>: Collection, Error, Expressible
         set { storage[.type] = newValue }
     }
     
+    public var isValid: Bool {
+        for result in storage.values {
+            if !result.isValid { return false }
+        }
+        return true
+    }
+    
     public subscript(key: PartialKeyPath<Target>) -> ValidationResult {
         get { return storage[.keyPath(key)] ?? .valid }
         set { storage[.keyPath(key)] = newValue }
