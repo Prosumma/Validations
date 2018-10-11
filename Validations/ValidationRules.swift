@@ -12,7 +12,7 @@ public extension ValidationRule {
     
     static let valid = ValidationRule { _ in return .valid }
     
-    static func notNil(message: String = "A value is required but was not supplied.") -> ValidationRule {
+    static func notNil(message: String = "A value is required.") -> ValidationRule {
         return ValidationRule { target in
             if target == nil {
                 return ValidationResult(message)
@@ -21,7 +21,9 @@ public extension ValidationRule {
         }
     }
     
-    static func required(message: String = "A value is required but was not supplied.") -> ValidationRule {
+    static let notNil = ValidationRule.notNil()
+    
+    static func required(message: String = "A value is required.") -> ValidationRule {
         return ValidationRule { target in
             if target == nil {
                 return ValidationResult(message)
@@ -34,6 +36,28 @@ public extension ValidationRule {
     }
     
     static let required = ValidationRule.required()
+    
+    static func notWhitespace(message: String = "A value is required.") -> ValidationRule {
+        return ValidationRule { (target: String) in
+            if target.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                return ValidationResult(message)
+            }
+            return .valid
+        }
+    }
+    
+    static let notWhitespace = ValidationRule.notWhitespace()
+    
+    static func notEmpty<C: Collection>(type: C.Type, message: String = "A value is required.") -> ValidationRule {
+        return ValidationRule { (target: C) in
+            if target.isEmpty {
+                return ValidationResult(message)
+            }
+            return .valid
+        }
+    }
+    
+    static let notEmpty = ValidationRule.notEmpty(type: String.self)
  
     static func type<T>(_ type: T.Type, message: String? = nil) -> ValidationRule {
         return ValidationRule { target in
