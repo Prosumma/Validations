@@ -18,7 +18,7 @@ class ValidationsTests: XCTestCase {
     }
     
     func testValidationExpectType() {
-        let rule = ValidationRule.type(Int.self)
+        let rule = ValidationRule.is(Int.self)
         XCTAssertTrue(rule.validate(5).isValid)
         XCTAssertFalse(rule.validate("5").isValid)
     }
@@ -27,7 +27,7 @@ class ValidationsTests: XCTestCase {
         let rule = ValidationRule
             .all (
                 .required,
-                .any(.type(String.self), .type(Int.self)),
+                .any(.is(String.self), .is(Int.self)),
                 .regex("^\\d+$"),
                 .range(0..<100)
             )

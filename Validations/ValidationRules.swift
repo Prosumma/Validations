@@ -81,7 +81,7 @@ public extension ValidationRule {
         }
     }
     
-    static func type<Target>(_ type: Target.Type) -> ValidationRule {
+    static func `is`<Target>(_ type: Target.Type) -> ValidationRule {
         return ValidationRule { target in
             if target == nil || target! is Target { return .valid }
             return .invalid
@@ -89,25 +89,19 @@ public extension ValidationRule {
     }
     
     static let `nil` = ValidationRule { target in
-        if target != nil {
-            return .valueNotAllowed
-        }
-        return .valid
+        return target == nil ? .valid : .valueNotAllowed
     }
     
     static let notNil = ValidationRule.not(.nil, message: ValidationResult.valueRequiredMessage)
 
     static func empty<C: Collection>(_ type: C.Type) -> ValidationRule {
         return ValidationRule { (target: C) in
-            if !target.isEmpty {
-                return .valueNotAllowed
-            }
-            return .valid
+            return target.isEmpty ? .valid : .valueNotAllowed
         }
     }
     
     static func notEmpty<C: Collection>(_ type: C.Type) -> ValidationRule {
-        return .if(.type(C.self), then: .not(.empty(type), message: ValidationResult.valueRequiredMessage))
+        return .if(.is(C.self), then: .not(.empty(type), message: ValidationResult.valueRequiredMessage))
     }
     
     static let empty = ValidationRule.empty(String.self)
@@ -115,12 +109,12 @@ public extension ValidationRule {
     
     static let whitespace = ValidationRule { (target: String) in
         if target.isEmpty || !target.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            return ValidationResult("The value must consist solely of whitespace.")
+            return "The value must consist solely of whitespace."
         }
         return .valid
     }
     
-    static let notWhitespace = ValidationRule.if(.type(String.self), then: .not(.whitespace, message: ValidationResult.valueRequiredMessage))    
+    static let notWhitespace = ValidationRule.if(.is(String.self), then: .not(.whitespace, message: ValidationResult.valueRequiredMessage))
     
     static func required<C: Collection>(_ type: C.Type) -> ValidationRule {
         return .message(ValidationResult.valueRequiredMessage, for: .all(.notNil, .notEmpty(C.self), .notWhitespace))
@@ -150,6 +144,21 @@ public extension ValidationRule {
     static func convertible<To: RawRepresentable>(to: To.Type) -> ValidationRule {
         return ValidationRule { (target: To.RawValue) in
             return To(rawValue: target) == nil ? .invalid : .valid
+        }
+    }
+    
+    static func equals<E: Equatable>(_ other: E) -> ValidationRule {
+        return ValidationRule { (target: E) in
+            return target == other ? .valid : .invalid
+        }
+    }
+    
+    static func equalsAny<E: Equatable>(_ other: E) -> ValidationRule {
+        return ValidationRule { target in
+            guard let target = target as? E else {
+                return .invalid
+            }
+            return target == other ? .valid : .invalid
         }
     }
     

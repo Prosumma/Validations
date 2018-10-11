@@ -26,7 +26,7 @@ public struct ValidationRule {
             if let target = target as? Target {
                 return rule(target)
             }
-            return .valid
+            return .notApplicable
         }
     }
     
