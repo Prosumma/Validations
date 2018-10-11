@@ -23,7 +23,10 @@ struct User: Validatable {
         let ageRange: ValidationRule = .message("Only ages 7 and 20!", for: .any(.equals(7), .equals(20)))
         return [
             \User.name: .required,
-            \User.gender: .convertible(to: Gender.self),
+            \User.gender: .message(ValidationResult.invalidMessage, for: .all (
+                .any(.is(String.self), .is(Gender.self)),
+                .convertible(to: Gender.self)
+            )),
             \User.age: .all (
                 .required,
                 .any(.is(String.self), .is(Int.self)),

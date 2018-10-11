@@ -10,7 +10,13 @@ import Foundation
 
 public extension ValidationRule {
     
-    static let valid = ValidationRule { _ in return .valid }
+    static func `return`(_ result: ValidationResult) -> ValidationRule {
+        return ValidationRule { _ in result }
+    }
+    
+    static let valid = ValidationRule.return(.valid)
+    static let notApplicable = ValidationRule.return(.notApplicable)
+    static let invalid = ValidationRule.return(.invalid)
     
     static func message(_ message: String, for rule: ValidationRule) -> ValidationRule {
         return ValidationRule { target in
@@ -21,10 +27,10 @@ public extension ValidationRule {
         }
     }
     
-    static func not(_ rule: ValidationRule, message: String) -> ValidationRule {
+    static func not(_ rule: ValidationRule) -> ValidationRule {
         return ValidationRule { target in
             if rule.validate(target).isValid {
-                return ValidationResult(message)
+                return .invalid
             }
             return .valid
         }
@@ -92,7 +98,7 @@ public extension ValidationRule {
         return target == nil ? .valid : .valueNotAllowed
     }
     
-    static let notNil = ValidationRule.not(.nil, message: ValidationResult.valueRequiredMessage)
+    static let notNil = ValidationRule.message(ValidationResult.valueRequiredMessage, for: .not(.nil))
 
     static func empty<C: Collection>(_ type: C.Type) -> ValidationRule {
         return ValidationRule { (target: C) in
@@ -101,7 +107,7 @@ public extension ValidationRule {
     }
     
     static func notEmpty<C: Collection>(_ type: C.Type) -> ValidationRule {
-        return .if(.is(C.self), then: .not(.empty(type), message: ValidationResult.valueRequiredMessage))
+        return .message(ValidationResult.valueRequiredMessage, for: .if(.is(C.self), then: .not(.empty(type))))
     }
     
     static let empty = ValidationRule.empty(String.self)
@@ -114,7 +120,7 @@ public extension ValidationRule {
         return .valid
     }
     
-    static let notWhitespace = ValidationRule.if(.is(String.self), then: .not(.whitespace, message: ValidationResult.valueRequiredMessage))
+    static let notWhitespace = ValidationRule.message(ValidationResult.valueRequiredMessage, for: .if(.is(String.self), then: .not(.whitespace)))
     
     static func required<C: Collection>(_ type: C.Type) -> ValidationRule {
         return .message(ValidationResult.valueRequiredMessage, for: .all(.notNil, .notEmpty(C.self), .notWhitespace))
