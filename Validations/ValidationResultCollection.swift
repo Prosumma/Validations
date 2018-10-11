@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct ValidationResultCollection<Target>: Collection, ExpressibleByDictionaryLiteral {
+public struct ValidationResultCollection<Target>: Collection, Error, ExpressibleByDictionaryLiteral {
 
     public init(dictionaryLiteral elements: (PartialKeyPath<Target>, ValidationResult)...) {
         for (key, result) in elements {
