@@ -40,30 +40,29 @@ public extension Rule {
         return compare(regex, options: options.union(.regularExpression))
     }
     
-    static func range<Bound>(_ range: Range<Bound>) -> Rule {
-        return test{ (target: Bound) in range.contains(target) }
-    }
-    
-    static func range<Bound>(_ range: ClosedRange<Bound>) -> Rule {
-        return test{ (target: Bound) in range.contains(target) }
-    }
-    
-    static func range<Bound>(_ range: PartialRangeFrom<Bound>) -> Rule {
-        return test{ (target: Bound) in range.contains(target) }
-    }
-    
-    static func range<Bound>(_ range: PartialRangeUpTo<Bound>) -> Rule {
-        return test{ (target: Bound) in range.contains(target) }
-    }
-    
-    static func range<Bound>(_ range: PartialRangeThrough<Bound>) -> Rule {
-        return test{ (target: Bound) in range.contains(target) }
+    static func range<R: RangeExpression>(_ range: R) -> Rule {
+        return test{ (target: R.Bound) in range.contains(target) }
     }
     
     static let ipv4 = regex(Rule.ipv4Pattern)
     static let ipv6 = regex(Rule.ipv6Pattern)
     static let ip = ipv4 || ipv6
+
+    static func count<C: Collection>(of _: C.Type, equalTo count: Int) -> Rule {
+        return test{ (target: C) in target.count == count }
+    }
+
+    static func count<C: Collection, R: RangeExpression>(of _: C.Type, in range: R) -> Rule where R.Bound == Int {
+        return test{ (target: C) in range.contains(target.count) }
+    }
+    
+    static func length(equalTo length: Int) -> Rule {
+        return count(of: String.self, equalTo: length)
+    }
+    
+    static func length<R: RangeExpression>(in range: R) -> Rule where R.Bound == Int {
+        return count(of: String.self, in: range)
+    }
+
 }
-
-
 
