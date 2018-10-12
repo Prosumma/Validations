@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct ResultCollection<Target>: Collection, ExpressibleByDictionaryLiteral {
+public struct ResultCollection<Target>: Collection, Error, ExpressibleByDictionaryLiteral {
     
     public enum Key: Hashable {
         case type

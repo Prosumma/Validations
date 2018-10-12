@@ -10,6 +10,14 @@ import Foundation
 
 public extension Rule {
     
+    private static let ipv4Segment = "(25[0-5]|2[0-4]\\d|1?(\\d){0,2})"
+    private static let ipv4Address = "((\(ipv4Segment)\\.){3}\(ipv4Segment))"
+    private static let ipv4Pattern = "^\(ipv4Address)$"
+    
+    private static let ipv6Segment = "[\\da-fA-F]{1,4}"
+    private static let ipv6Address = "((\(ipv6Segment):){7}\(ipv6Segment)|(\(ipv6Segment):){1,7}:|(\(ipv6Segment):){1,6}:\(ipv6Segment)|(\(ipv6Segment):){1,5}(:\(ipv6Segment)){1,2}|(\(ipv6Segment):){1,4}(:\(ipv6Segment)){1,3}|(\(ipv6Segment):){1,3}(:\(ipv6Segment)){1,4}|(\(ipv6Segment):){1,1}(:\(ipv6Segment)){1,5}|:(:\(ipv6Segment)){1,7}|(\(ipv6Segment):){1,5}(:\(ipv6Segment)){1,2}|::([fF]{4}(:0{1,4})?:)?\(ipv4Address)|(\(ipv6Segment):){1,4}:\(ipv4Address))"
+    private static let ipv6Pattern = "^\(ipv6Address)$"
+    
     static let `nil` = test { $0 == nil }
     static let empty = test { (target: String) in target.isEmpty }
     
@@ -51,6 +59,10 @@ public extension Rule {
     static func range<Bound>(_ range: PartialRangeThrough<Bound>) -> Rule {
         return test{ (target: Bound) in range.contains(target) }
     }
+    
+    static let ipv4 = regex(Rule.ipv4Pattern)
+    static let ipv6 = regex(Rule.ipv6Pattern)
+    static let ip = ipv4 || ipv6
 }
 
 
