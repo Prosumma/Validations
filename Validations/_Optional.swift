@@ -9,15 +9,19 @@
 import Foundation
 
 protocol _Optional {
-    var _hasValue: Bool { get }
-    var _unwrapped: Any { get }
+    var isEmpty: Bool { get }
+    var unwrapped: Any { get }
+    var wrappedType: Any.Type { get }
 }
 
 extension Optional: _Optional {
-    var _hasValue: Bool {
-        return self != nil
+    var isEmpty: Bool {
+        return self == nil
     }
-    var _unwrapped: Any {
+    var unwrapped: Any {
         return unsafelyUnwrapped
+    }
+    var wrappedType: Any.Type {
+        return Wrapped.self
     }
 }

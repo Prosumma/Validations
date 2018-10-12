@@ -2,7 +2,7 @@
 //  Validator.swift
 //  Validations
 //
-//  Created by Gregory Higley on 10/11/18.
+//  Created by Gregory Higley on 10/12/18.
 //  Copyright © 2018 Prosumma LLC. All rights reserved.
 //
 
@@ -11,24 +11,22 @@ import Foundation
 public struct Validator {
     private init() {}
     
-    public static func value<Target>(of keyPath: PartialKeyPath<Target>, in target: Target) -> Any? {
-        let value = target[keyPath: keyPath]
-        if let value = value as? _Optional {
-            if !value._hasValue {
-                return nil
+    public static func validate<Target>(_ target: Target, withRules rules: RuleCollection<Target>) -> ResultCollection<Target> {
+        var results: ResultCollection<Target> = [:]
+        for (keyPath, rule) in rules {
+            let value = target[keyPath: keyPath]
+            let result: Result
+            if let value = value as? _Optional {
+                if value.isEmpty {
+                    result = rule.validate(nil)
+                } else {
+                    result = rule.validate(value.unwrapped)
+                }
             } else {
-                return value._unwrapped
+                result = rule.validate(target)
             }
-        } else {
-            return value
+            results[keyPath] = result
         }
-    }
-    
-    public static func validateRules<Target: Validatable>(_ target: Target) -> ValidationResultCollection<Target> {
-        var result: ValidationResultCollection<Target> = [:]
-        for (keyPath, rule) in target.validationRules {
-            result[keyPath] = rule.validate(value(of: keyPath, in: target))
-        }
-        return result
+        return results
     }
 }
