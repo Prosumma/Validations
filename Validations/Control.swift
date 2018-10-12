@@ -80,7 +80,7 @@ public extension Rule {
         return Rule { target in
             var result: Result = .invalid
             for rule in rules {
-                result = rule.validate(rule)
+                result = rule.validate(target)
                 if result.isValid { break }
             }
             return result
@@ -121,3 +121,6 @@ public extension Rule {
     
 }
 
+public func ||<T1, T2>(_: T1.Type, _: T2.Type) -> Rule {
+    return .any(.is(T1.self), .is(T2.self))
+}

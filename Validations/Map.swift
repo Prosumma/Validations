@@ -11,7 +11,7 @@ import Foundation
 public struct Map {
     private init() {}
     
-    public func trimString(_ string: String) -> String? {
+    public static func trimString(_ string: String) -> String? {
         return string.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     

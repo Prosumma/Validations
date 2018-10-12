@@ -27,6 +27,10 @@
 		F37EE519217054C300567C70 /* Validatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F37EE517217054C300567C70 /* Validatable.swift */; };
 		F37EE51B217073EE00567C70 /* Validator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F37EE51A217073EE00567C70 /* Validator.swift */; };
 		F37EE51C217073EE00567C70 /* Validator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F37EE51A217073EE00567C70 /* Validator.swift */; };
+		F37EE51E2170788300567C70 /* ValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F37EE51D2170788300567C70 /* ValidationTests.swift */; };
+		F37EE51F2170788300567C70 /* ValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F37EE51D2170788300567C70 /* ValidationTests.swift */; };
+		F37EE5232170828E00567C70 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = F37EE5202170828A00567C70 /* Server.swift */; };
+		F37EE5242170828E00567C70 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = F37EE5202170828A00567C70 /* Server.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +66,8 @@
 		F37EE51421704FA500567C70 /* ResultCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultCollection.swift; sourceTree = "<group>"; };
 		F37EE517217054C300567C70 /* Validatable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validatable.swift; sourceTree = "<group>"; };
 		F37EE51A217073EE00567C70 /* Validator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validator.swift; sourceTree = "<group>"; };
+		F37EE51D2170788300567C70 /* ValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationTests.swift; sourceTree = "<group>"; };
+		F37EE5202170828A00567C70 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +145,8 @@
 			isa = PBXGroup;
 			children = (
 				F34C48DA216F0AB2008D8587 /* Info.plist */,
+				F37EE51D2170788300567C70 /* ValidationTests.swift */,
+				F37EE5202170828A00567C70 /* Server.swift */,
 			);
 			path = ValidationsTests;
 			sourceTree = "<group>";
@@ -251,6 +259,7 @@
 					};
 					F34C48D2216F0AB2008D8587 = {
 						CreatedOnToolsVersion = 10.0;
+						LastSwiftMigration = 1000;
 					};
 					F34C48E8216F0B21008D8587 = {
 						CreatedOnToolsVersion = 10.0;
@@ -258,6 +267,7 @@
 					};
 					F34C48F0216F0B21008D8587 = {
 						CreatedOnToolsVersion = 10.0;
+						LastSwiftMigration = 1000;
 					};
 				};
 			};
@@ -333,6 +343,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F37EE5242170828E00567C70 /* Server.swift in Sources */,
+				F37EE51E2170788300567C70 /* ValidationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,6 +368,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F37EE5232170828E00567C70 /* Server.swift in Sources */,
+				F37EE51F2170788300567C70 /* ValidationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -556,6 +570,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = HJ7CB8H6VW;
 				INFOPLIST_FILE = ValidationsTests/Info.plist;
@@ -566,6 +581,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.prosumma.ValidationsTests;
 				PRODUCT_NAME = ValidationsTests;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -575,6 +591,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = HJ7CB8H6VW;
 				INFOPLIST_FILE = ValidationsTests/Info.plist;
@@ -653,6 +670,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -667,6 +685,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.prosumma.ValidationsTests;
 				PRODUCT_NAME = ValidationsTests;
 				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
@@ -675,6 +694,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;

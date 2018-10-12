@@ -14,7 +14,7 @@ public extension Rule {
     static let empty = test { (target: String) in target.isEmpty }
     
     static func containsCharacters(in characterSet: CharacterSet, options: String.CompareOptions = []) -> Rule {
-        return test { (target: String) in target.rangeOfCharacter(from: characterSet, options: options, range: nil) != nil }
+        return test{ (target: String) in target.rangeOfCharacter(from: characterSet, options: options, range: nil) != nil }
     }
     
     static let whitespace = !empty && test { (target: String) in target.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
@@ -25,11 +25,31 @@ public extension Rule {
     static let required = message("A value is required.", for: !`nil` && (String.self &> !(empty || whitespace)))
     
     static func compare(_ string: String, options: String.CompareOptions = []) -> Rule {
-        return test { (target: String) in target.range(of: string, options: options, range: nil, locale: nil) != nil }
+        return test{ (target: String) in target.range(of: string, options: options, range: nil, locale: nil) != nil }
     }
     
     static func regex(_ regex: String, options: String.CompareOptions = []) -> Rule {
         return compare(regex, options: options.union(.regularExpression))
+    }
+    
+    static func range<Bound>(_ range: Range<Bound>) -> Rule {
+        return test{ (target: Bound) in range.contains(target) }
+    }
+    
+    static func range<Bound>(_ range: ClosedRange<Bound>) -> Rule {
+        return test{ (target: Bound) in range.contains(target) }
+    }
+    
+    static func range<Bound>(_ range: PartialRangeFrom<Bound>) -> Rule {
+        return test{ (target: Bound) in range.contains(target) }
+    }
+    
+    static func range<Bound>(_ range: PartialRangeUpTo<Bound>) -> Rule {
+        return test{ (target: Bound) in range.contains(target) }
+    }
+    
+    static func range<Bound>(_ range: PartialRangeThrough<Bound>) -> Rule {
+        return test{ (target: Bound) in range.contains(target) }
     }
 }
 
